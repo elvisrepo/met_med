@@ -136,6 +136,10 @@ code{font-family:var(--font-mono);font-size:.9em}
 <div><label for="mSrc">Source</label><input id="mSrc" value="nature.com"></div>
 </div>
 <div style="margin-top:12px"><label for="mBody">Body (extracted text, min 300 chars for generate)</label><textarea id="mBody">Test fleet data shows 900 km range with 12-minute fast charge and zero cobalt. Independent verification pending. Full details at source link; this tool stores summary text only and always credits the source on publish.</textarea></div>
+<div class="grid2" style="margin-top:12px">
+<div><label for="mDate">Published date (optional)</label><input id="mDate" type="date" data-od-id="manual-date"></div>
+<div><label for="mImg">Main image URL (required — else needs_image 422)</label><input id="mImg" type="url" placeholder="https://…" data-od-id="manual-image"></div>
+</div>
 <div class="row"><button class="btn btn-primary" id="useManual" data-od-id="manual-use">Use manual text →</button></div>
 </div>
 <p class="note">SSRF guard: http/https only, private IPs blocked, 15s timeout, 5MB cap, 3 redirects. Source image mandatory — zero candidates blocks generate (<code>needs_image</code>, 422).</p>
@@ -173,8 +177,10 @@ function goReview(){ var a = localStorage.getItem('ia_article'); if(!a){ setStep
 document.getElementById('toReview').addEventListener('click', goReview);
 document.getElementById('useManual').addEventListener('click', function(){
   var t=document.getElementById('mTitle').value, s=document.getElementById('mSrc').value, b=document.getElementById('mBody').value;
+  var d=document.getElementById('mDate').value, img=document.getElementById('mImg').value.trim();
   if(b.length<300){ setSteps([{c:'fail',t:'Manual body too short — paste at least 300 chars'}]); return; }
-  localStorage.setItem('ia_article', JSON.stringify({url:document.getElementById('url').value, hash:'sha256:manual', title:t, source:s, published:'manual paste', body:b, tier:'manual', id:'art-'+Date.now()}));
+  if(!img || !/^https?:\/\//.test(img)){ setSteps([{c:'fail',t:'needs_image (422) — source image URL is required'}]); return; }
+  localStorage.setItem('ia_article', JSON.stringify({url:document.getElementById('url').value, hash:'sha256:manual', title:t, source:s, published:d||'manual paste (no date)', body:b, img:img, tier:'manual', id:'art-'+Date.now()}));
   goReview();
 });
 </script>

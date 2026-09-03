@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — Accept invite</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-xl: 24px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-8: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --elev-raised: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:1.52;min-height:100vh;display:grid;place-items:center;padding:var(--space-5)}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-8);width:100%;max-width:420px;box-shadow:var(--elev-raised)}
+.brand{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-weight:700;margin-bottom:var(--space-2)}
+.mark{width:32px;height:32px;border-radius:var(--radius-md);background:var(--accent);color:var(--accent-on);display:grid;place-items:center;font-family:var(--font-mono);font-size:var(--text-sm)}
+h1{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:-0.025em;margin:0 0 var(--space-2)}
+.hint{color:var(--muted);font-size:var(--text-sm);margin:0 0 var(--space-5)}
+.hint code{font-family:var(--font-mono)}
+.field{margin-bottom:var(--space-4)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+input{width:100%;font:inherit;min-height:44px;padding:0 var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+input:focus{outline:none;box-shadow:var(--focus-ring)}
+.err{display:none;font-size:var(--text-sm);color:var(--danger);margin:0 0 var(--space-3)}
+.ok{display:none;font-size:var(--text-sm);color:var(--success);margin:0 0 var(--space-3)}
+.btn{width:100%;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--accent);background:var(--accent);color:var(--accent-on);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--accent-hover)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.meta{margin-top:var(--space-5);border-top:1px solid var(--border-soft);padding-top:var(--space-4);font-size:var(--text-sm);color:var(--fg-2)}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:var(--text-xs);padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="card" data-od-id="accept-card">
+<div class="brand"><span class="mark">IA</span> Insta AI</div>
+<h1 data-od-id="accept-title">Set your password</h1>
+<p class="hint" id="who">Invite for <code id="whoEmail">new@studio.co</code> · one-use link, expires in 24h.</p>
+<p class="err" id="err" role="alert" data-od-id="accept-error"></p>
+<p class="ok" id="ok" data-od-id="accept-ok"></p>
+<div id="form">
+<div class="field"><label for="pw1">New password (min 8 chars)</label><input id="pw1" type="password" autocomplete="new-password" data-od-id="accept-password"></div>
+<div class="field"><label for="pw2">Confirm password</label><input id="pw2" type="password" autocomplete="new-password" data-od-id="accept-confirm"></div>
+<button class="btn" id="go" data-od-id="accept-submit">Activate account →</button>
+</div>
+<div class="meta" data-od-id="accept-note">Link invalid or expired (410)? Ask an admin to re-invite. After activation, sign in at <a href="login.html">login</a>.</div>
+</div>
+<script>
+// Reference prototype only — backend: GET /api/users/accept?token= validates (200 | 410 expired | 404 unknown),
+// POST /api/users/accept {token, password} activates (one-use). Mirrors login.html states.
+var q = new URLSearchParams(window.location.search);
+var token = q.get('token');
+var err = document.getElementById('err'), ok = document.getElementById('ok');
+function show(el, m){ el.textContent = m; el.style.display = 'block'; }
+if(!token){ show(err, '410 — missing invite token. Ask an admin for a fresh invite.'); document.getElementById('form').style.display = 'none'; }
+else if(token === 'expired'){ show(err, '410 — link expired or already used. Ask an admin to re-invite.'); document.getElementById('form').style.display = 'none'; }
+document.getElementById('go').addEventListener('click', function(){
+  var a = document.getElementById('pw1').value, b = document.getElementById('pw2').value;
+  err.style.display = 'none';
+  if(a.length < 8){ show(err, '422 — password must be at least 8 characters.'); return; }
+  if(a !== b){ show(err, '422 — passwords do not match.'); return; }
+  this.disabled = true; this.textContent = 'Activating…';
+  setTimeout(function(){ document.getElementById('form').style.display = 'none'; show(ok, 'Active ✓ — account created. Continue to sign in.'); }, 700);
+});
+</script>
+</body>
+</html>
