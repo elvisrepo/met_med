@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI MVP — System Design</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --bg: oklch(98% 0.005 250);
+  --surface: oklch(100% 0 0);
+  --fg: oklch(22% 0.02 240);
+  --muted: oklch(50% 0.018 240);
+  --border: oklch(90% 0.008 240);
+  --accent: oklch(58% 0.16 145);
+  --accent-ink: oklch(100% 0 0);
+  --danger: oklch(55% 0.18 25);
+  --warn: oklch(70% 0.14 85);
+  --code-bg: oklch(96% 0.006 240);
+  --font-display: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55}
+a{color:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border)}
+.topbar-inner{max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:var(--fg);color:var(--bg);display:grid;place-items:center;font-family:var(--font-mono);font-size:14px;font-weight:700}
+.nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.nav button{border:1px solid transparent;background:transparent;padding:8px 12px;border-radius:8px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;min-height:36px}
+.nav button.active,.nav button:hover{background:var(--code-bg);color:var(--fg);border-color:var(--border)}
+.badge{font-family:var(--font-mono);font-size:11px;border:1px solid var(--border);background:var(--surface);padding:3px 8px;border-radius:99px;color:var(--muted)}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+.hero h1{margin:0 0 8px;font-size:clamp(26px,3vw,36px);letter-spacing:-.03em;line-height:1.1}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.flow5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+.flow5 div{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:12.5px}
+.flow5 strong{display:block;font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.assump{margin-top:14px;border-left:3px solid var(--accent);background:oklch(96% 0.03 150);padding:10px 12px;border-radius:0 10px 10px 0;font-size:13px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:20px}
+section.card h2{margin:0 0 4px;font-size:20px;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:90ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kv{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.kv h4{margin:0 0 6px;font-size:13px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.kv p,.kv li{font-size:13.5px}
+.mermaid-box{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:auto}
+.mermaid{font-family:var(--font-mono)}
+.toolbar{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid var(--border);background:var(--surface);padding:10px 16px;border-radius:9px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;min-height:44px}
+.btn-primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn-primary:hover{background:oklch(30% 0.02 240)}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-accent:hover{filter:brightness(.92)}
+.btn-ghost{background:transparent}
+.btn:focus-visible{outline:3px solid oklch(70% 0.15 145);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border)}
+th{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--font-mono)}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid var(--border)}
+.pill.ok{background:oklch(94% 0.05 150);border-color:oklch(80% 0.08 150)}
+.pill.warn{background:oklch(96% 0.06 85);border-color:oklch(82% 0.09 85)}
+.pill.err{background:oklch(94% 0.06 25);border-color:oklch(82% 0.1 25)}
+.pill.info{background:oklch(94% 0.03 240)}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px;overflow:auto;font-family:var(--font-mono);font-size:12.5px;line-height:1.5}
+code{font-family:var(--font-mono);font-size:.92em}
+/* wireframe prototype */
+.proto{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg)}
+.proto-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.proto-tabs button{flex:1;min-width:140px;border:0;border-right:1px solid var(--border);background:transparent;padding:12px;font:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;min-height:44px}
+.proto-tabs button.active{background:var(--fg);color:var(--bg)}
+.screen{display:none;grid-template-columns:220px 1fr;min-height:560px}
+.screen.active{display:grid}
+.sidenav{background:var(--surface);border-right:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:6px}
+.sidenav .s-link{padding:10px 12px;border-radius:8px;font-size:13.5px;color:var(--muted)}
+.sidenav .s-link.on{background:var(--fg);color:var(--bg);font-weight:600}
+.sidenav .who{margin-top:auto;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px}
+.s-main{padding:22px;max-width:860px}
+.s-main h3{margin:0 0 4px;font-size:19px;letter-spacing:-.02em}
+.s-main .hint{color:var(--muted);font-size:13px;margin:0 0 16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--border);border-radius:9px;padding:12px;font:inherit;background:var(--surface);min-height:44px}
+.field textarea{min-height:120px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.preview-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface)}
+.preview-card img{width:100%;height:220px;object-fit:cover;display:block}
+.preview-card .pc-body{padding:14px}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px}
+.stat b{font-size:20px;display:block;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12px;color:var(--muted)}
+.notice{border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;background:var(--surface);margin-bottom:10px}
+.login-wrap{max-width:380px;margin:40px auto;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px}
+.img-placeholder{background:linear-gradient(135deg,oklch(88% 0.04 150),oklch(92% 0.03 240));height:220px;display:grid;place-items:center;color:var(--muted);font-family:var(--font-mono);font-size:12px;text-align:center;padding:12px}
+.nfr{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.footer-note{color:var(--muted);font-size:12.5px;margin-top:20px}
+@media(max-width:900px){
+ .hero{grid-template-columns:1fr}
+ .grid2,.grid3,.nfr{grid-template-columns:1fr}
+ .flow5{grid-template-columns:1fr 1fr}
+ .screen.active{grid-template-columns:1fr}
+ .sidenav{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}
+ .sidenav .who{display:none}
+ .stat-row{grid-template-columns:1fr 1fr}
+ .row2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+<div class="logo" data-od-id="brand"><span class="logo-mark">IA</span> Insta AI · MVP System Design</div>
+<nav class="nav" data-od-id="doc-nav">
+<button class="active" data-target="overview">Overview</button>
+<button data-target="hld">HLD</button>
+<button data-target="sequence">Sequence</button>
+<button data-target="erd">ERD</button>
+<button data-target="wireframes">Wireframes</button>
+<button data-target="nfr">NFR</button>
+</nav>
+</div></div>
+
+<div class="wrap">
+<!-- OVERVIEW -->
+<div class="hero" id="overview" data-od-id="overview-hero">
+<div>
+<h1>Internal tool for 2–4 employees. URL → review → post.</h1>
+<p>Fixed stack: Django + DRF monolith · React Vite SPA · Postgres · Redis + Celery · Docker Compose = VPS prod · Caddy + SSL · pg_dump → S3/B2 · .env secrets · GitHub Actions (pytest, eslint, pip-audit/npm audit, semgrep). Admin-invite-only auth, JWT in httpOnly cookie, all keys server-side.</p>
+<div class="stack">
+<span class="badge">Django 5 + DRF</span><span class="badge">React Vite SPA</span><span class="badge">Postgres 16</span><span class="badge">Redis + Celery</span><span class="badge">Caddy</span><span class="badge">IG Graph API</span>
+</div>
+<div class="flow5" data-od-id="mvp-flow">
+<div><strong>1 · INGEST</strong>Paste article URL → fetch title + body</div>
+<div><strong>2 · GENERATE</strong>Auto-detect category → caption + hashtags + AI image</div>
+<div><strong>3 · REVIEW</strong>Human edit / regenerate (mandatory gate)</div>
+<div><strong>4 · PUBLISH</strong>Post to IG Business via Graph API</div>
+<div><strong>5 · LOG</strong>Tokens, cost, status per post</div>
+</div>
+<div class="assump"><b>Assumption check:</b> your 5-step flow is correct for MVP. Flag — if article fetch needs paywall/JS rendering, add fallback: paste title + body manually. Out of scope locked: no scheduler, no bulk URLs, no auto-post, no Facebook, no WordPress (Phase 2 = new publisher adapters).</div>
+</div>
+<div>
+<div class="kv"><h4>Scope contract</h4><p style="margin:0"><span class="pill ok">IN</span> invite-only auth · fetch · generate · mandatory review · IG publish · cost log<br><br><span class="pill warn">OUT → P2</span> scheduler · bulk · auto-post · FB · WordPress adapters</p></div>
+<div class="kv" style="margin-top:12px"><h4>How to use this doc</h4><p style="margin:0">HLD + ERD are live <code>mermaid</code> (copy button exports source). Wireframes below are clickable — run the full flow: Login → Paste-link → Review → Dashboard → Users. Reconcile with Q1–Q5 then convert to YAML entities + Markdown spec for steps 1.7–1.12.</p></div>
+</div>
+</div>
+
+<!-- HLD -->
+<section class="card" id="hld" data-od-id="hld-section">
+<h2>1 · HLD — boxes and arrows</h2>
+<p class="sub">Browser → Caddy → Django modules (auth, articles, generations, publishing, metrics) → Postgres / Redis. Celery worker handles steps 1 · 2 · 4. All IG + LLM keys stay server-side. Single Docker Compose unit runs local = VPS prod.</p>
+<div class="mermaid-box"><pre class="mermaid" id="mermaid-hld">flowchart LR
+  B["Browser\nReact Vite SPA"] -->|HTTPS :443| C["Caddy\nreverse-proxy + SSL\n+ static SPA"]
+  C -->|proxy /api/* :8000| D["Django + DRF monolith :8000"]
+  subgraph DJ["Django modules"]
+    A1["auth\ninvite + JWT httpOnly"]
+    A2["articles\nfetch title/body"]
+    A3["generations\ncategory + caption + image"]
+    A4["publishing\nIG Graph publisher"]
+    A5["metrics\ntokens / cost / status"]
+  end
+  D --- DJ
+  D -->|ORM| PG[("Postgres 16\nusers/articles/\ngenerations/posts")]
+  D -->|broker + result| RD[("Redis\nqueue + cache")]
+  RD --> W["Celery worker\ntasks: fetch_article\ngenerate_caption\npublish_ig"]
+  W --> PG
+  W -->|server-side key| LT["LLM text API\ncaption + hashtags"]
+  W -->|server-side key| LI["LLM image API\n1080x1350 image"]
+  W -->|IG User token| IG["Instagram Graph API\ncontainers + publish"]
+  D -->|nightly cron| S3["S3 / B2\npg_dump nightly"]
+  GH["GitHub Actions\npytest + eslint +\naudit + semgrep"] -. CI .-> D
+</pre></div>
+<div class="toolbar">
+<button class="btn" data-od-id="copy-hld" onclick="copyM('mermaid-hld')">Copy HLD mermaid</button>
+<span class="badge">p95 generation &lt; 90s · async via Celery</span><span class="badge">keys never reach browser</span>
+</div>
+<div class="grid3">
+<div class="kv"><h4>Django modules</h4><ul style="margin:0;padding-left:18px"><li><code>auth</code> — invite, one-use reset link (TTL 24h), session JWT httpOnly + CSRF</li><li><code>articles</code> — URL normalize, fetch, strip boilerplate, store source</li><li><code>generations</code> — category detect, prompt build, caption + image orchestration</li><li><code>publishing</code> — IG container → publish, token refresh, retry</li><li><code>metrics</code> — tokens_in/out, cost_usd, status, per-user aggregates</li></ul></div>
+<div class="kv"><h4>Celery tasks (async)</h4><ul style="margin:0;padding-left:18px"><li><code>fetch_article(article_id)</code> — timeout 15s, retry 2×</li><li><code>generate_caption(generation_id)</code> — LLM text + image in parallel</li><li><code>publish_ig(post_id)</code> — 2-step Graph publish, idempotency key</li><li>Sync only: login, review/edit, approve — never block on LLM/IG</li></ul></div>
+<div class="kv"><h4>Deploy unit</h4><p style="margin:0">One <code>docker-compose.yml</code>: <code>caddy</code> + <code>web</code> (gunicorn) + <code>worker</code> + <code>beat</code> + <code>db</code> + <code>redis</code>. Same file local + VPS. Caddy terminates SSL, serves <code>/</code> SPA, proxies <code>/api/*</code> + <code>/admin/*</code>. Nightly <code>pg_dump | gzip | rclone → B2</code>, 30-day retention.</p></div>
+</div>
+</section>
+
+<!-- SEQUENCE -->
+<section class="card" id="sequence" data-od-id="sequence-section">
+<h2>2 · End-to-end sequence + failure paths</h2>
+<p class="sub">One post happy path with three explicit failure branches: fetch fail, LLM fail, IG token expired. Mandatory human review gate before any publish call.</p>
+<div class="mermaid-box"><pre class="mermaid" id="mermaid-seq">sequenceDiagram
+  actor E as Employee
+  participant SPA as React SPA
+  participant API as Django API
+  participant W as Celery Worker
+  participant LLM as LLM text+image
+  participant IG as IG Graph API
+  E->>SPA: Paste article URL
+  SPA->>API: POST /api/articles {url}
+  API->>W: fetch_article.delay()
+  W->>W: GET URL timeout 15s
+  alt Fetch fail (403/timeout/paywall)
+    W-->>API: status=fetch_failed
+    API-->>SPA: show error + manual paste fallback
+    E->>SPA: Paste title+body manually
+    SPA->>API: PATCH /api/articles
+  end
+  API->>W: generate_caption.delay()
+  W->>LLM: category + caption + hashtags
+  W->>LLM: generate image 1080x1350
+  alt LLM fail / timeout / over budget
+    W-->>API: status=gen_failed + retry 1x
+    API-->>SPA: Retry button + error code
+    E->>SPA: Click Regenerate
+    SPA->>API: POST /api/generations/:id/regenerate
+  end
+  W-->>API: status=ready_for_review
+  API-->>SPA: caption + image preview
+  E->>SPA: Edit caption + Approve (mandatory)
+  SPA->>API: POST /api/posts {generation_id}
+  API->>W: publish_ig.delay()
+  W->>IG: POST /media container
+  alt IG token expired (OAuthException 190)
+    W-->>API: status=token_expired + alert admin
+    API-->>SPA: Reconnect IG banner
+  else IG publish OK
+    W->>IG: POST /media_publish
+    W-->>API: ig_media_id + posted_at
+  end
+  API->>API: log tokens_in/out + cost_usd
+  API-->>SPA: Dashboard row: Posted + cost
+</pre></div>
+<div class="toolbar"><button class="btn" onclick="copyM('mermaid-seq')" data-od-id="copy-seq">Copy sequence mermaid</button></div>
+<div class="grid3">
+<div class="kv"><h4>Fetch fail</h4><p style="margin:0">Retry 2× with backoff. Then <code>fetch_failed</code> + manual title/body form. Never block generation queue. Log source domain for paywall list.</p></div>
+<div class="kv"><h4>LLM fail</h4><p style="margin:0">Retry 1×, cap spend per attempt. Surface model error code, keep prior draft. Regenerate is per-field (caption-only / image-only) to save cost.</p></div>
+<div class="kv"><h4>IG token expired</h4><p style="margin:0">Detect <code>code 190</code>, set <code>post.status=token_expired</code>, Slack/email admin, show Reconnect banner. Publish job parked, idempotent resume after refresh — no duplicate posts.</p></div>
+</div>
+</section>
+
+<!-- ERD -->
+<section class="card" id="erd" data-od-id="erd-section">
+<h2>3 · ERD</h2>
+<p class="sub">Four tables. One article → many generations (edits + regenerates preserved). One generation → at most one post. Every generation logs tokens and cost even on failure.</p>
+<div class="mermaid-box"><pre class="mermaid" id="mermaid-erd">erDiagram
+  USER ||--o{ ARTICLE : creates
+  ARTICLE ||--o{ GENERATION : has
+  GENERATION ||--o| POST : publishes
+  USER ||--o{ POST : posts
+  USER {
+    uuid id PK
+    string email UK
+    string role "admin|editor"
+    bool active
+    timestamptz created_at
+  }
+  ARTICLE {
+    uuid id PK
+    uuid created_by FK
+    string url UK
+    string title
+    text body
+    string source
+    string fetch_status
+    timestamptz created_at
+  }
+  GENERATION {
+    uuid id PK
+    uuid article_id FK
+    uuid created_by FK
+    string category
+    text caption
+    string hashtags
+    string image_url
+    int tokens_in
+    int tokens_out
+    numeric cost_usd
+    string status
+    timestamptz created_at
+  }
+  POST {
+    uuid id PK
+    uuid generation_id FK
+    uuid posted_by FK
+    string ig_media_id
+    string status "queued|posted|failed|token_expired"
+    text error
+    timestamptz posted_at
+  }
+</pre></div>
+<div class="toolbar"><button class="btn" onclick="copyM('mermaid-erd')" data-od-id="copy-erd">Copy ERD mermaid</button><span class="badge">Postgres 16 · uuid PKs · gzip pg_dump nightly</span></div>
+<div style="overflow:auto"><table data-od-id="erd-fields">
+<tr><th>Table</th><th>Key fields</th><th>Rules</th><th class="num">Est. rows/mo</th></tr>
+<tr><td><code>User</code></td><td>id, email UK, role admin/editor, active</td><td>Invite-only; deactivation keeps history; JWT session, no password stored in clear</td><td class="num">4</td></tr>
+<tr><td><code>Article</code></td><td>url UK, title, body, source, fetch_status</td><td>URL normalized (strip UTM); body = extracted text only, no full republication</td><td class="num">~120</td></tr>
+<tr><td><code>Generation</code></td><td>category, caption, hashtags, image_url, tokens_in/out, cost_usd, status</td><td>Append-only; edits create new row or version; cost logged even on fail</td><td class="num">~300</td></tr>
+<tr><td><code>Post</code></td><td>ig_media_id UK, status, posted_by, posted_at, error</td><td>One post per generation; idempotency key = generation_id; 190 → token_expired</td><td class="num">~100</td></tr>
+</table></div>
+</section>
+
+<!-- WIREFRAMES -->
+<section class="card" id="wireframes" data-od-id="wireframes-section">
+<h2>4 · Clickable wireframes — desktop-first (5 screens)</h2>
+<p class="sub">Minimalist internal tool. No marketing copy. Click the tabs to walk the flow. Try: Log in → paste URL → Generate → edit caption → Post → check Dashboard → invite in Users.</p>
+<div class="proto" data-od-id="proto">
+<div class="proto-tabs" role="tablist">
+<button class="active" data-screen="s-login" data-od-id="tab-login">1 · Login</button>
+<button data-screen="s-paste" data-od-id="tab-paste">2 · Paste-link</button>
+<button data-screen="s-review" data-od-id="tab-review">3 · Review / Edit</button>
+<button data-screen="s-dash" data-od-id="tab-dashboard">4 · Dashboard</button>
+<button data-screen="s-users" data-od-id="tab-users">5 · Users</button>
+</div>
+
+<!-- LOGIN -->
+<div class="screen active" id="s-login">
+<div class="sidenav"><div class="s-link on">Login</div><div class="who">Insta AI · internal<br>v0.1 MVP</div></div>
+<div class="s-main"><div class="login-wrap">
+<h3 data-od-id="login-title">Sign in</h3><p class="hint">Invite-only. No public signup.</p>
+<div class="field"><label>Work email</label><input value="mia@studio.co" id="login-email"></div>
+<div class="field"><label>Password</label><input type="password" value="••••••••••"></div>
+<button class="btn btn-primary" style="width:100%" data-od-id="login-submit" onclick="go('s-paste')">Sign in →</button>
+<div class="notice" style="margin-top:12px">New here? Ask an admin for an invite. Invite link is one-use, expires in 24h.</div>
+<div class="notice">Session: JWT in httpOnly cookie. Keys never reach the browser.</div>
+</div></div>
+</div>
+
+<!-- PASTE -->
+<div class="screen" id="s-paste">
+<div class="sidenav"><div class="s-link">＋ New post</div><div class="s-link on">Paste link</div><div class="s-link" onclick="go('s-review')">Review</div><div class="s-link" onclick="go('s-dash')">Dashboard</div><div class="s-link" onclick="go('s-users')">Users</div><div class="who">mia@studio.co · editor</div></div>
+<div class="s-main">
+<h3 data-od-id="paste-title">New post — paste article URL</h3><p class="hint">Step 1 of 3 · fetch title + body, then generate.</p>
+<div class="field"><label>Article URL</label><input id="paste-url" value="https://techcrunch.com/2026/08/30/solid-state-battery-range-breakthrough/"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary" data-od-id="paste-fetch" onclick="simulateFetch()">Fetch + Generate →</button>
+<button class="btn btn-ghost" onclick="document.getElementById('manual').style.display='block'">Manual paste fallback</button>
+</div>
+<div id="fetch-status" class="notice" style="display:none;margin-top:12px">Fetching… title + body (timeout 15s)…</div>
+<div id="manual" style="display:none;margin-top:12px">
+<div class="row2"><div class="field"><label>Title (manual)</label><input value="Solid-state batteries hit 900 km range in test fleet"></div><div class="field"><label>Source</label><input value="techcrunch.com"></div></div>
+<div class="field"><label>Body (extracted text)</label><textarea>Test fleet data shows 900 km range, 12-min fast charge…</textarea></div>
+</div>
+<div class="notice" style="margin-top:12px">Paywall / JS-heavy page? Use manual paste. We store extracted text only — no full republication.</div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div class="screen" id="s-review">
+<div class="sidenav"><div class="s-link" onclick="go('s-paste')">＋ New post</div><div class="s-link on">Review</div><div class="s-link" onclick="go('s-dash')">Dashboard</div><div class="s-link" onclick="go('s-users')">Users</div><div class="who">mia@studio.co · editor</div></div>
+<div class="s-main">
+<h3 data-od-id="review-title">Review — mandatory before post</h3><p class="hint">Category auto-detected · edit anything · regenerate per-field to save cost.</p>
+<div class="row2">
+<div>
+<div class="field"><label>Category (auto-detected)</label><select><option>Tech / Energy ✓ 0.94</option><option>Business</option><option>Culture</option></select></div>
+<div class="field"><label>Caption editor · <span id="ccount">0</span>/2200</label><textarea id="caption">🔋 900 km on one charge? Solid-state batteries just did it in a real test fleet — 12-min fast charge, zero cobalt.
+
+Would you switch to EV if range anxiety disappeared? 👇
+
+Source: TechCrunch</textarea></div>
+<div class="field"><label>Hashtags (tap to remove)</label><input value="#EV #SolidState #CleanTech #BatteryBreakthrough #TechNews"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" onclick="regen(this,'caption')" data-od-id="regen-caption">Regenerate caption</button>
+<button class="btn" onclick="regen(this,'image')" data-od-id="regen-image">Regenerate image</button>
+</div>
+</div>
+<div>
+<div class="preview-card"><div class="img-placeholder" id="imgph">AI IMAGE 1080×1350<br>silver EV on coastal road at dawn<br>minimal, no text overlay<br><br>[regenerate = $0.02]</div><div class="pc-body"><span class="pill info">DRAFT</span> <span class="pill">tokens 1,240 in / 380 out · $0.041</span><p style="font-size:13px;color:var(--muted)">Image prompt locked to article + category. Faces avoided. Preview only — full-res on publish.</p></div></div>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+<button class="btn btn-accent" data-od-id="post-button" onclick="doPost(this)">Approve + Post to Instagram →</button>
+<button class="btn btn-ghost">Save draft</button>
+</div>
+<div id="post-status" class="notice" style="display:none">Publishing… container → publish (idempotency: generation id)…</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- DASH -->
+<div class="screen" id="s-dash">
+<div class="sidenav"><div class="s-link" onclick="go('s-paste')">＋ New post</div><div class="s-link" onclick="go('s-review')">Review</div><div class="s-link on">Dashboard</div><div class="s-link" onclick="go('s-users')">Users</div><div class="who">admin view · last 30 days</div></div>
+<div class="s-main" style="max-width:1000px">
+<h3 data-od-id="dashboard-title">Dashboard</h3><p class="hint">Last 30 days · updated hourly · costs from logged tokens.</p>
+<div class="stat-row">
+<div class="stat"><span>Posts / day (avg)</span><b>3.4</b><span>102 posted · target 3–5</span></div>
+<div class="stat"><span>Posts / employee</span><b>Mia 44 · Jon 33 · Ana 25</b><span>4th seat invited</span></div>
+<div class="stat"><span>Avg tokens + cost / post</span><b>$0.058</b><span>1,310 in / 402 out · target &lt;$0.10</span></div>
+<div class="stat"><span>Failure rate</span><b>6.8%</b><span>7 failed · 2 token_expired</span></div>
+</div>
+<div style="overflow:auto"><table data-od-id="dashboard-table">
+<tr><th>Date</th><th>Article → Post</th><th>By</th><th>Status</th><th class="num">Cost</th></tr>
+<tr><td><code>09-02</code></td><td>Solid-state 900km… → ig_1842201</td><td>mia</td><td><span class="pill ok">posted</span></td><td class="num">$0.061</td></tr>
+<tr><td><code>09-02</code></td><td>City e-bike subsidy… → ig_1842197</td><td>jon</td><td><span class="pill ok">posted</span></td><td class="num">$0.048</td></tr>
+<tr><td><code>09-01</code></td><td>Paywalled chip story…</td><td>ana</td><td><span class="pill err">fetch_failed</span></td><td class="num">$0.000</td></tr>
+<tr><td><code>09-01</code></td><td>LLM timeout on image…</td><td>mia</td><td><span class="pill warn">gen_failed · retried</span></td><td class="num">$0.022</td></tr>
+<tr><td><code>08-31</code></td><td>Weekend roundup…</td><td>—</td><td><span class="pill err">token_expired · reconnect</span></td><td class="num">$0.055</td></tr>
+</table></div>
+</div>
+</div>
+
+<!-- USERS -->
+<div class="screen" id="s-users">
+<div class="sidenav"><div class="s-link" onclick="go('s-paste')">＋ New post</div><div class="s-link" onclick="go('s-review')">Review</div><div class="s-link" onclick="go('s-dash')">Dashboard</div><div class="s-link on">Users</div><div class="who">admin only</div></div>
+<div class="s-main">
+<h3 data-od-id="users-title">Users — admin only</h3><p class="hint">Invite-only. One-use link, 24h expiry. Deactivation preserves history.</p>
+<div class="field"><label>Invite by email</label><div style="display:flex;gap:8px"><input id="inv-email" placeholder="new@studio.co" style="flex:1"><button class="btn btn-primary" data-od-id="invite-button" onclick="invite()">Send invite →</button></div></div>
+<div id="inv-msg" class="notice" style="display:none"></div>
+<div style="overflow:auto"><table data-od-id="users-table">
+<tr><th>Email</th><th>Role</th><th>Status</th><th>Posts</th><th></th></tr>
+<tr><td><code>admin@studio.co</code></td><td>admin</td><td><span class="pill ok">active</span></td><td class="num">12</td><td></td></tr>
+<tr><td><code>mia@studio.co</code></td><td>editor</td><td><span class="pill ok">active</span></td><td class="num">44</td><td><button class="btn" style="min-height:36px;padding:6px 10px">Deactivate</button></td></tr>
+<tr><td><code>jon@studio.co</code></td><td>editor</td><td><span class="pill ok">active</span></td><td class="num">33</td><td><button class="btn" style="min-height:36px;padding:6px 10px">Deactivate</button></td></tr>
+<tr><td><code>ana@studio.co</code></td><td>editor</td><td><span class="pill warn">invited · expires 14h</span></td><td class="num">25</td><td><button class="btn" style="min-height:36px;padding:6px 10px">Revoke</button></td></tr>
+</table></div>
+</div>
+</div>
+
+</div>
+<p class="footer-note">Prototype behaviour: tabs switch screens; Paste-link simulates fetch (~1.2s) then jumps to Review; character count + regenerate + post are live in-page. Responsive: sidebar collapses under 900px, no horizontal scroll at 360–1920px.</p>
+</section>
+
+<!-- NFR -->
+<section class="card" id="nfr" data-od-id="nfr-section">
+<h2>5 · NFR notes</h2>
+<p class="sub">Targets and guardrails that gate Round 2 (backend / frontend / testing / VPS / monitoring).</p>
+<div class="nfr">
+<div class="kv"><h4>Perf · &lt;90s p95 generation</h4><p style="margin:0">Async Celery; SPA polls <code>/api/generations/:id</code>. Parallel text + image calls. Timeouts: fetch 15s, LLM 60s. P95 measured from POST article → ready_for_review. Alert if p95 &gt; 75s over 1h.</p></div>
+<div class="kv"><h4>Cost · &lt;$0.10 / post</h4><p style="margin:0">Log <code>tokens_in/out + cost_usd</code> per generation. Per-field regenerate. Monthly cap env <code>LLM_MONTHLY_CAP_USD</code>; block image regen at 90%. Dashboard avg must stay &lt; $0.07 to leave headroom.</p></div>
+<div class="kv"><h4>Security · OWASP Top 10 basics</h4><ul style="margin:0;padding-left:18px"><li>JWT httpOnly + Secure + SameSite=Lax, CSRF token, 24h invite TTL, rate-limit login 5/min</li><li>SSRF guard: fetch allowlist http/https, no private IPs, 5MB body cap</li><li>IG/LLM keys in server <code>.env</code> only; <code>pip-audit / npm audit + semgrep</code> in CI block merge</li></ul></div>
+<div class="kv"><h4>Legal · no full-text republication</h4><p style="margin:0">Store extracted text internally only. Caption = original summary + link/credit to source. Image = AI-generated, no article photos scraped. Delete body on request; pg_dump encrypted at rest on B2.</p></div>
+</div>
+<div class="toolbar"><span class="badge">Caddy auto-SSL · pg_dump nightly → B2 · 30-day retention</span><span class="badge">CI: pytest · eslint · audits · semgrep</span></div>
+<pre data-od-id="yaml-hint"># → Next: YAML entities + Markdown spec (steps 1.7–1.12)
+entities: [User, Article, Generation, Post]  # fields per ERD §3
+flows: [invite(24h TTL), fetch(15s), generate(parallel), review(mandatory), publish(idempotent), log(cost)]
+nfr: { p95: 90s, cost_per_post: $0.10, auth: invite-only+httpOnly, republication: none }
+phase2_adapters: [Scheduler, BulkIngest, FacebookPublisher, WordPressPublisher]</pre>
+</section>
+
+<p class="footer-note">Files: <code>insta-ai-mvp-design.html</code> (this doc — HLD + sequence + ERD mermaid + clickable wireframes). Copy mermaid sources into your spec repo; reconcile with Q1–Q5 before Round 2.</p>
+</div>
+
+<script>
+mermaid.initialize({startOnLoad:true, theme:'neutral'});
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+ const el=document.getElementById(b.dataset.target); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+document.querySelectorAll('.proto-tabs button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.screen)));
+function go(id){
+ document.querySelectorAll('.proto-tabs button').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));
+ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+}
+function copyM(id){
+ const t=document.getElementById(id).innerText;
+ navigator.clipboard.writeText(t).then(()=>alert('Mermaid copied — paste into spec / mermaid.live'));
+}
+function simulateFetch(){
+ const s=document.getElementById('fetch-status');s.style.display='block';s.textContent='Fetching… title + body (timeout 15s)…';
+ setTimeout(()=>{s.innerHTML='<span class="pill ok">fetched</span> Title: Solid-state batteries hit 900 km · 1,840 chars · source techcrunch.com → generating caption + image…';setTimeout(()=>go('s-review'),900);},1200);
+}
+const cap=document.getElementById('caption'),cc=document.getElementById('ccount');
+function upd(){cc.textContent=cap.value.length;} cap.addEventListener('input',upd);upd();
+function regen(btn,kind){
+ const o=btn.textContent;btn.textContent='Regenerating…';btn.disabled=true;
+ setTimeout(()=>{btn.textContent=o;btn.disabled=false;
+  if(kind==='caption'){cap.value+='\n\nAlt: 12 minutes to full — the end of range anxiety? ⚡';upd();}
+  else{document.getElementById('imgph').innerHTML='AI IMAGE 1080×1350 (v2)<br>close-up solid-state cell + EV silhouette<br>teal / graphite, no text<br><br>[regen logged +$0.02]';}
+ },1100);
+}
+function doPost(btn){
+ const s=document.getElementById('post-status');s.style.display='block';s.innerHTML='Publishing… container → publish…';
+ btn.disabled=true;setTimeout(()=>{s.innerHTML='<span class="pill ok">posted</span> ig_media_id ig_1842201 · logged $0.061 · see Dashboard →';btn.disabled=false;},1400);
+}
+function invite(){
+ const e=document.getElementById('inv-email').value||'new@studio.co';
+ const m=document.getElementById('inv-msg');m.style.display='block';
+ m.innerHTML='<span class="pill warn">invited</span> '+e+' — one-use link sent, expires in 24h. Deactivation preserves post history.';
+}
+</script>
+</body>
+</html>

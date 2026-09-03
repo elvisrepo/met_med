@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — Review</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --surface-warm: #eeeeee;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --meta: #111111;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 36px;
+  --leading-body: 1.52;
+  --leading-tight: 1.06;
+  --tracking-display: -0.025em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --elev-raised: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+  --motion-fast: 150ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body)}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{border-right:1px solid var(--border);background:var(--surface);padding:var(--space-5);display:flex;flex-direction:column;gap:2px}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 var(--space-3);border-radius:var(--radius-md);text-decoration:none;color:var(--fg-2);font-size:var(--text-sm)}
+.side a.on{background:var(--accent);color:var(--accent-on);font-weight:600}
+.main{padding:var(--space-8);max-width:1080px}
+.eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:var(--tracking-display);margin:6px 0 4px}
+.hint{color:var(--muted);font-size:var(--text-sm);margin:0 0 var(--space-5)}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:var(--space-4)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+select,textarea,input{width:100%;font:inherit;min-height:44px;padding:10px var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+textarea{min-height:190px;resize:vertical;line-height:var(--leading-body)}
+select:focus,textarea:focus,input:focus{outline:none;box-shadow:var(--focus-ring)}
+.row{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-4)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;color:var(--fg);text-decoration:none}
+.btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:var(--text-xs);padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border)}
+.pill-ok{color:var(--success);border-color:var(--success)} .pill-warn{color:var(--warn);border-color:var(--warn)} .pill-err{color:var(--danger);border-color:var(--danger)}
+.imgbox{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg)}
+.imgbox .art{aspect-ratio:4/5;display:grid;place-items:center;text-align:center;padding:var(--space-5);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-2)}
+.imgbox .cap{padding:var(--space-4);border-top:1px solid var(--border-soft);font-size:var(--text-sm)}
+.count{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--muted)}
+.status{font-size:var(--text-sm);margin-top:var(--space-3)}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.shell{grid-template-columns:1fr}.side{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="side" data-od-id="sidenav">
+<a href="new.html" data-od-id="nav-new">＋ New post</a><a href="review.html" class="on" data-od-id="nav-review">Review</a><a href="dashboard.html" data-od-id="nav-dashboard">Dashboard</a><a href="users.html" data-od-id="nav-users">Users</a><a href="../index.html" data-od-id="nav-index">Overview</a>
+</nav>
+<main class="main">
+<div class="eyebrow">Step 2–3 of 3 · /review/:id · mandatory gate</div>
+<h1 data-od-id="review-title">Review and approve</h1>
+<p class="hint" id="srcLine">No article loaded — <a href="new.html">fetch one first</a>.</p>
+<div class="grid">
+<div class="panel" data-od-id="editor-panel">
+<label for="cat">Category — auto-detected, override allowed</label>
+<select id="cat" data-od-id="category-select">
+<option value="science" selected>Science · 0.94</option><option value="sport">Sport</option><option value="showbiz">Showbiz</option><option value="politics">Politics · neutral-factual</option><option value="general">General</option>
+</select>
+<div style="margin-top:12px"><label for="cap">Caption · <span class="count" id="count">0/2200</span></label>
+<textarea id="cap" data-od-id="caption-editor"></textarea></div>
+<div style="margin-top:12px"><label for="tags">Hashtags (3–5, source credit mandatory)</label>
+<input id="tags" data-od-id="hashtag-input" value="#SolidState #EV #CleanTech #Science"></div>
+<div class="row">
+<button class="btn" id="regenCap" data-od-id="regen-caption">Regenerate caption</button>
+<button class="btn" id="regenImg" data-od-id="regen-image">Regenerate image</button>
+</div>
+<p class="status" id="costLine" data-od-id="cost-pill"><span class="pill pill-ok">in_review</span> <span class="pill">1,310 in / 402 out · $0.058</span></p>
+</div>
+<div>
+<div class="imgbox" data-od-id="image-preview">
+<div class="art" id="artPrev">AI IMAGE 1080×1350 · science<br>abstract battery cell, graphite + teal<br>no faces · no text overlay</div>
+<div class="cap"><span class="pill">image_prompt v3 · model img-2.1</span><div style="margin-top:8px;color:var(--muted);font-size:13px">Abstract for politics/showbiz (no real faces). Source photo never scraped. Full-res on publish.</div></div>
+</div>
+<div class="row">
+<button class="btn btn-primary" id="post" data-od-id="post-button">Approve + Post →</button>
+<a class="btn" href="dashboard.html" data-od-id="save-draft">Save draft</a>
+</div>
+<p class="status" id="postStatus" data-od-id="post-status"></p>
+</div>
+</div>
+</main>
+</div>
+<script>
+var art = JSON.parse(localStorage.getItem('ia_article')||'null');
+if(!art){ /* stay, prompt to fetch */ }
+else {
+  document.getElementById('srcLine').textContent = art.title+' · '+art.source+' · '+art.published;
+  var base = '🔋 900 km on one charge? Solid-state batteries just did it in a real test fleet — 12-min fast charge, zero cobalt.\n\nWould you switch to EV if range anxiety disappeared?\n\nSource: '+art.source+' — link in bio.';
+  document.getElementById('cap').value = base;
+}
+var cap=document.getElementById('cap'), count=document.getElementById('count'), cost=0.058;
+function upd(){ count.textContent = cap.value.length+'/2200'; count.style.color = cap.value.length>2200 ? 'var(--danger)' : 'var(--muted)'; }
+cap.addEventListener('input', upd); upd();
+function setCost(d){ cost+=d; document.getElementById('costLine').innerHTML='<span class="pill pill-ok">in_review</span> <span class="pill">1,310 in / 402 out · $'+cost.toFixed(3)+'</span>'; }
+document.getElementById('regenCap').addEventListener('click', function(){ var b=this; b.disabled=true; b.textContent='Regenerating…';
+  setTimeout(function(){ cap.value += '\n\nAlt: 12 minutes to full — the end of range anxiety?'; upd(); setCost(0.018); b.disabled=false; b.textContent='Regenerate caption'; }, 900); });
+document.getElementById('regenImg').addEventListener('click', function(){ var b=this; b.disabled=true; b.textContent='Regenerating…';
+  setTimeout(function(){ document.getElementById('artPrev').innerHTML='AI IMAGE 1080×1350 (v2)<br>close-up ceramic cell + EV silhouette<br>teal / graphite · no text'; setCost(0.02); b.disabled=false; b.textContent='Regenerate image'; }, 900); });
+document.getElementById('cat').addEventListener('change', function(){ var v=this.value;
+  var map={science:'abstract battery cell, graphite + teal',sport:'stadium light streaks, abstract, no faces',showbiz:'abstract stage bokeh, no faces',politics:'abstract neutral geometry, no faces, no symbols',general:'minimal gradient geometry'};
+  document.getElementById('artPrev').innerHTML='AI IMAGE 1080×1350 · '+v+'<br>'+map[v]+'<br>no text overlay'; });
+document.getElementById('post').addEventListener('click', function(){
+  if(cap.value.length>2200){ document.getElementById('postStatus').innerHTML='<span class="pill pill-err">409</span> Caption over 2200 chars — shorten before posting.'; return; }
+  if(!art){ document.getElementById('postStatus').innerHTML='<span class="pill pill-err">409</span> Wrong state: fetch an article first.'; return; }
+  var b=this; b.disabled=true; b.textContent='Publishing…';
+  document.getElementById('postStatus').innerHTML='Container → publish · idempotency <code>'+art.id+'</code>…';
+  setTimeout(function(){
+    var posts = JSON.parse(localStorage.getItem('ia_posts')||'[]');
+    if(posts.some(function(p){return p.gen===art.id;})){ document.getElementById('postStatus').innerHTML='<span class="pill pill-warn">duplicate blocked</span> Already posted (idempotent).'; b.disabled=false; b.textContent='Approve + Post →'; return; }
+    posts.push({title:art.title, by:(JSON.parse(localStorage.getItem('ia_session')||'{}').email||'editor'), cost:cost, at:new Date().toISOString().slice(0,10), gen:art.id, ig:'ig_'+Math.floor(1842000+Math.random()*999)});
+    localStorage.setItem('ia_posts', JSON.stringify(posts));
+    document.getElementById('postStatus').innerHTML='<span class="pill pill-ok">posted</span> '+posts[posts.length-1].ig+' · $'+cost.toFixed(3)+' logged · <a href="dashboard.html">see dashboard →</a>';
+    b.disabled=false; b.textContent='Approve + Post →';
+  }, 1300);
+});
+</script>
+</body>
+</html>

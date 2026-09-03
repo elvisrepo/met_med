@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — MVP UI (Clean)</title>
+<style>
+/* design-systems/clean/tokens.css
+ * Structured token bindings for Clean.
+ * clean product system with white surfaces, subtle borders, and focused hierarchy.
+ */
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --surface-warm: #eeeeee;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --meta: #111111;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 36px;
+  --text-3xl: 54px;
+  --text-4xl: 76px;
+  --leading-body: 1.52;
+  --leading-tight: 1.06;
+  --tracking-display: -0.025em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-y-desktop: 96px;
+  --section-y-tablet: 68px;
+  --section-y-phone: 48px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --container-max: 1180px;
+  --container-gutter-desktop: 36px;
+  --container-gutter-tablet: 24px;
+  --container-gutter-phone: 16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body)}
+.container{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-gutter-desktop)}
+.topbar{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10}
+.topbar-in{max-width:var(--container-max);margin:0 auto;padding:var(--space-3) var(--container-gutter-desktop);display:flex;align-items:center;gap:var(--space-3) var(--space-4);flex-wrap:wrap}
+.topbar-actions{margin-left:auto;display:flex;gap:var(--space-3);align-items:center;flex-wrap:wrap}
+.textlink{font-size:var(--text-sm);font-weight:600;color:var(--fg-2);text-decoration:underline;text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center}
+.textlink:hover{color:var(--fg)}
+.brand{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-weight:700;letter-spacing:var(--tracking-display)}
+.mark{width:32px;height:32px;border-radius:var(--radius-md);background:var(--accent);color:var(--accent-on);display:grid;place-items:center;font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700}
+.eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-size:var(--text-2xl);line-height:var(--leading-tight);letter-spacing:var(--tracking-display);margin:var(--space-2) 0 var(--space-3)}
+h2{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:var(--tracking-display);margin:0 0 var(--space-2)}
+h3{font-family:var(--font-display);font-size:var(--text-lg);margin:0 0 var(--space-2)}
+.lead{color:var(--fg-2);max-width:65ch;margin:0}
+.hero{padding:var(--space-8) 0 var(--space-6)}
+.hero-status{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-4);align-items:center}
+ kbd{font-family:var(--font-mono);font-size:var(--text-xs);border:1px solid var(--border);border-bottom-width:2px;border-radius:var(--radius-sm);padding:1px 6px;background:var(--surface)}
+section{padding:0 0 var(--space-8)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-6)}
+.panel-head{display:flex;align-items:baseline;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-4)}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-4)}
+.tile{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:var(--space-2);transition:transform var(--motion-fast) var(--ease-standard),box-shadow var(--motion-fast) var(--ease-standard),border-color var(--motion-fast) var(--ease-standard)}
+.tile:hover{box-shadow:var(--elev-raised);border-color:var(--fg);transform:translateY(-2px)}
+.tile:hover .go{transform:translateX(4px)}
+.tile:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.tile p{margin:0;color:var(--fg-2);font-size:var(--text-sm)}
+.tile .go{font-weight:600;font-size:var(--text-sm);display:inline-flex;align-items:center;gap:6px;transition:transform var(--motion-fast) var(--ease-standard)}
+.tile-static{border-style:dashed;background:var(--surface)}
+.tile-static:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);color:var(--fg);cursor:pointer;text-decoration:none;transition:background var(--motion-fast) var(--ease-standard)}
+.btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary:active{background:var(--accent-active)}
+.btn-secondary:hover{background:var(--surface-warm)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn:active{transform:translateY(1px)}
+.textlink:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius-sm)}
+.field{margin-bottom:var(--space-4)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+input{width:100%;font:inherit;min-height:44px;padding:0 var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+input:focus{outline:none;box-shadow:var(--focus-ring)}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:var(--text-xs);padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--bg)}
+.pill-ok{color:var(--success);border-color:var(--success)}
+.pill-warn{color:var(--warn);border-color:var(--warn)}
+.pill-err{color:var(--danger);border-color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+th,td{text-align:left;padding:var(--space-3) var(--space-2);border-bottom:1px solid var(--border-soft)}
+th{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+code{font-family:var(--font-mono);font-size:.9em}
+.tokengrid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)}
+.swatch{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--bg)}
+.swatch i{display:block;height:56px}
+.swatch span{display:block;padding:var(--space-2) var(--space-3);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-2)}
+.footer{border-top:1px solid var(--border);padding:var(--space-6) 0;color:var(--fg-2);font-size:var(--text-sm)}
+.tablewrap{overflow:auto;margin-top:var(--space-4);border:1px solid var(--border-soft);border-radius:var(--radius-md)}
+.tablewrap:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+@media(max-width:900px){.tokengrid{grid-template-columns:1fr 1fr}.container{padding:0 var(--container-gutter-tablet)}}
+@media(max-width:560px){.container{padding:0 var(--container-gutter-phone)}.topbar-actions{margin-left:0;width:100%}.topbar-actions .btn-primary{flex:1}.hero{padding:var(--space-6) 0 var(--space-4)}.tokengrid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="topbar-in" aria-label="Primary">
+<div class="brand" data-od-id="brand"><span class="mark" aria-hidden="true">IA</span> Insta AI · MVP UI</div>
+<span class="pill" data-od-id="stack-pill">Clean system · Django + DRF · React SPA parity</span>
+<span class="topbar-actions">
+<a class="textlink" href="insta-ai-architecture.html" data-od-id="link-architecture">Architecture (kept)</a>
+<a class="btn btn-primary" href="screens/new.html" data-od-id="cta-new-post">New post →</a>
+</span>
+</nav></header>
+
+<main class="container">
+<section class="hero" data-od-id="intro" aria-labelledby="intro-h1">
+<div class="eyebrow">Internal tool · 2–4 employees · invite-only</div>
+<h1 id="intro-h1">Paste link → review → post. No auto-post.</h1>
+<p class="lead">Production UI built on the Clean design system — white surfaces, subtle borders, focused hierarchy. This launcher documents the system and links the five working views. Source of truth for flow: <code>insta-ai-architecture.html</code> (kept, unmodified) + <code>insta-ai-mvp.md</code> spec.</p>
+<div class="hero-status" data-od-id="live-status"><span class="pill pill-ok" id="statPosted">102 posted · 30d</span><span class="pill" id="statCost">$0.058 avg · cap $0.10</span><span class="pill pill-warn" id="statFail">6.8% fail · 2 token_expired</span><span style="font-size:var(--text-xs);color:var(--fg-2)">Press <kbd>N</kbd> for new post</span></div>
+</section>
+
+<section data-od-id="views" aria-labelledby="views-h2" style="padding-top:0">
+<div class="panel">
+<div class="panel-head"><h2 id="views-h2">Views</h2><span class="eyebrow">5 routes · desktop-first responsive</span></div>
+<div class="card-row">
+<a class="tile" href="screens/login.html" data-od-id="view-card-login"><span class="eyebrow">01 · /login</span><h3>Login</h3><p>Invite-only sign in. httpOnly JWT, rate-limit 5/min, 24h invite link explainer.</p><span class="go">Open login <span aria-hidden="true">→</span></span></a>
+<a class="tile" href="screens/new.html" data-od-id="view-card-new"><span class="eyebrow">02 · /new</span><h3>Paste link</h3><p>URL normalize, SSRF guard, 3-tier fetch, manual fallback, Generate → review.</p><span class="go">Open paste-link <span aria-hidden="true">→</span></span></a>
+<a class="tile" href="screens/review.html" data-od-id="view-card-review"><span class="eyebrow">03 · /review/:id</span><h3>Review / Edit</h3><p>Mandatory gate. Category override, live count, per-field regenerate, Approve + Post.</p><span class="go">Open review <span aria-hidden="true">→</span></span></a>
+<a class="tile" href="screens/dashboard.html" data-od-id="view-card-dashboard"><span class="eyebrow">04 · /dashboard</span><h3>Dashboard</h3><p>Posts/day, per-employee, avg cost, failure list. Token-expired banner.</p><span class="go">Open dashboard <span aria-hidden="true">→</span></span></a>
+<a class="tile" href="screens/users.html" data-od-id="view-card-users"><span class="eyebrow">05 · /users · admin</span><h3>Users</h3><p>Invite by email, one-use 24h link, deactivate preserves history.</p><span class="go">Open users <span aria-hidden="true">→</span></span></a>
+<div class="tile tile-static" data-od-id="view-card-spec"><span class="eyebrow">Spec · locked</span><h3>MVP contract</h3><p>Categories sport / science / showbiz / politics / general. p95 &lt;90s, &lt;$0.10/post, summary + link only.</p><span class="go">See insta-ai-mvp.md</span></div>
+</div>
+</div>
+</section>
+
+<section data-od-id="design-system" aria-labelledby="ds-h2" style="padding-top:0">
+<div class="panel">
+<div class="panel-head"><h2 id="ds-h2">Design system — Clean</h2><span class="eyebrow">Tokens verbatim · components per manifest</span></div>
+<p class="lead" style="margin-bottom:16px">Background <code>--bg</code>, surfaces <code>--surface</code>, text <code>--fg</code>, primary action <code>--accent (#111111)</code>, status <code>--success / --warn / --danger</code>. Type Poppins→Inter fallback for display, Roboto→Inter for body, Inconsolata→SF Mono for code. 8pt grid, 44px targets, 150–240ms transitions.</p>
+<div class="tokengrid" data-od-id="token-swatches">
+<div class="swatch"><i style="background:var(--bg);border-bottom:1px solid var(--border)"></i><span>--bg · canvas</span></div>
+<div class="swatch"><i style="background:var(--surface)"></i><span>--surface · panels</span></div>
+<div class="swatch"><i style="background:var(--fg)"></i><span>--fg · text / --accent</span></div>
+<div class="swatch"><i style="background:var(--border)"></i><span>--border · hairlines</span></div>
+<div class="swatch"><i style="background:var(--success)"></i><span>--success · posted</span></div>
+<div class="swatch"><i style="background:var(--warn)"></i><span>--warn · retry / invited</span></div>
+<div class="swatch"><i style="background:var(--danger)"></i><span>--danger · failed</span></div>
+<div class="swatch"><i style="background:var(--surface-warm)"></i><span>--surface-warm · hover</span></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center" data-od-id="component-preview">
+<button class="btn btn-primary" type="button" onclick="window.location.href='screens/review.html'">Approve + Post</button><button class="btn btn-secondary" type="button" onclick="window.location.href='screens/review.html'">Regenerate caption</button>
+<span class="pill pill-ok">posted</span><span class="pill pill-warn">token_expired</span><span class="pill pill-err">fetch_failed</span>
+</div>
+<div class="tablewrap" tabindex="0" role="region" aria-label="Route to API map"><table data-od-id="route-table">
+<tr><th>Route</th><th>API</th><th>States</th></tr>
+<tr><td><code>/login</code></td><td><code>POST /api/auth/login</code> → 401 / 429</td><td>idle · error · rate-limited · invited-info</td></tr>
+<tr><td><code>/new</code></td><td><code>POST /api/articles</code> → 202 / 400 / 422</td><td>fetch free → playwright → firecrawl(off) → needs_image</td></tr>
+<tr><td><code>/review/:id</code></td><td><code>POST /api/generations</code> · <code>POST /api/posts</code> → 409 if not in_review</td><td>draft · in_review · queued · posted / failed</td></tr>
+<tr><td><code>/dashboard?days=30</code></td><td><code>GET /api/dashboard</code></td><td>aggregates + failure table + reconnect banner</td></tr>
+<tr><td><code>/users</code></td><td><code>POST /api/users/invite</code> · 24h TTL</td><td>active · invited · deactivated (history kept)</td></tr>
+</table></div>
+</div>
+</section>
+
+<footer class="footer" data-od-id="footer">Kept file: <code>insta-ai-architecture.html</code> unchanged. New: <code>index.html</code> + <code>screens/*.html</code>. Demo data persists in <code>localStorage</code> only — no backend in this preview.</footer>
+</main>
+<script>
+try {
+  var posts = JSON.parse(localStorage.getItem('ia_posts') || '[]');
+  if (posts.length) {
+    document.getElementById('statPosted').textContent = (102 + posts.length) + ' posted · 30d (incl. ' + posts.length + ' local)';
+  }
+} catch (e) {}
+document.addEventListener('keydown', function (e) {
+  if ((e.key === 'n' || e.key === 'N') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+    window.location.href = 'screens/new.html';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — New post</title>
+<style>
+/* design-systems/clean/tokens.css
+ * Structured token bindings for Clean.
+ * clean product system with white surfaces, subtle borders, and focused hierarchy.
+ */
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --surface-warm: #eeeeee;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --meta: #111111;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 36px;
+  --text-3xl: 54px;
+  --text-4xl: 76px;
+  --leading-body: 1.52;
+  --leading-tight: 1.06;
+  --tracking-display: -0.025em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-y-desktop: 96px;
+  --section-y-tablet: 68px;
+  --section-y-phone: 48px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --container-max: 1180px;
+  --container-gutter-desktop: 36px;
+  --container-gutter-tablet: 24px;
+  --container-gutter-phone: 16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body)}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{border-right:1px solid var(--border);background:var(--surface);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-1)}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 var(--space-3);border-radius:var(--radius-md);text-decoration:none;color:var(--fg-2);font-size:var(--text-sm);font-weight:500}
+.side a.on{background:var(--accent);color:var(--accent-on);font-weight:600}
+.side .me{margin-top:auto;font-size:var(--text-xs);color:var(--muted);border-top:1px solid var(--border);padding-top:var(--space-3)}
+.main{padding:var(--space-8);max-width:820px}
+.eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:var(--tracking-display);margin:var(--space-2) 0 var(--space-1)}
+.hint{color:var(--muted);font-size:var(--text-sm);margin:0 0 var(--space-5)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-4)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+input,textarea{width:100%;font:inherit;min-height:44px;padding:var(--space-3) var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+textarea{min-height:110px;resize:vertical}
+input:focus,textarea:focus{outline:none;box-shadow:var(--focus-ring)}
+.row{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-4)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;text-decoration:none;color:var(--fg)}
+.btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.steps{list-style:none;margin:var(--space-4) 0 0;padding:0;display:grid;gap:var(--space-2);font-size:var(--text-sm)}
+.steps li{border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:var(--bg);display:flex;gap:var(--space-3);align-items:center}
+.dot{width:10px;height:10px;border-radius:var(--radius-pill);background:var(--border);flex:none}
+li.run .dot{background:var(--warn)} li.done .dot{background:var(--success)} li.fail .dot{background:var(--danger)}
+code{font-family:var(--font-mono);font-size:.9em}
+.note{font-size:var(--text-sm);color:var(--fg-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:var(--bg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}.side .me{display:none}.grid2{grid-template-columns:1fr}.main{padding:var(--space-5)}}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="side" data-od-id="sidenav">
+<a href="new.html" class="on" data-od-id="nav-new">＋ New post</a>
+<a href="review.html" data-od-id="nav-review">Review</a>
+<a href="dashboard.html" data-od-id="nav-dashboard">Dashboard</a>
+<a href="users.html" data-od-id="nav-users">Users</a>
+<a href="../index.html" data-od-id="nav-index">Overview</a>
+<div class="me" id="me" data-od-id="session-label">editor</div>
+</nav>
+<main class="main">
+<div class="eyebrow">Step 1 of 3 · /new</div>
+<h1 data-od-id="new-title">Paste article URL</h1>
+<p class="hint">Tier-1 free fast by default → Tier-2 Playwright on JS shell → Tier-3 Firecrawl only if enabled. URL normalized, UTM stripped.</p>
+<div class="panel" data-od-id="url-panel">
+<label for="url">Article URL</label>
+<input id="url" data-od-id="url-input" value="https://www.nature.com/articles/solid-state-battery-2026">
+<div class="row">
+<button class="btn btn-primary" id="fetch" data-od-id="fetch-button">Fetch + Generate →</button>
+<button class="btn" id="manualToggle" data-od-id="manual-toggle">Manual fallback</button>
+</div>
+<ul class="steps" id="steps" data-od-id="fetch-steps"></ul>
+</div>
+<div class="panel" id="result" style="display:none" data-od-id="fetch-result">
+<h3 style="font-family:var(--font-display);margin:0 0 8px" id="rTitle"></h3>
+<p style="font-size:var(--text-sm);color:var(--fg-2);margin:0 0 8px" id="rMeta"></p>
+<p style="font-size:var(--text-sm);margin:0 0 12px" id="rBody"></p>
+<div class="row" style="margin-top:0">
+<button class="btn btn-primary" id="toReview" data-od-id="cta-to-review">Continue to review →</button>
+</div>
+</div>
+<div class="panel" id="manual" style="display:none" data-od-id="manual-panel">
+<label>Manual title / body — dead-last resort (paywall 401)</label>
+<div class="grid2">
+<div><label for="mTitle">Title</label><input id="mTitle" value="Solid-state batteries hit 900 km in test fleet"></div>
+<div><label for="mSrc">Source</label><input id="mSrc" value="nature.com"></div>
+</div>
+<div style="margin-top:12px"><label for="mBody">Body (extracted text, min 300 chars for generate)</label><textarea id="mBody">Test fleet data shows 900 km range with 12-minute fast charge and zero cobalt. Independent verification pending. Full details at source link; this tool stores summary text only and always credits the source on publish.</textarea></div>
+<div class="row"><button class="btn btn-primary" id="useManual" data-od-id="manual-use">Use manual text →</button></div>
+</div>
+<p class="note">SSRF guard: http/https only, private IPs blocked, 15s timeout, 5MB cap, 3 redirects. Source image mandatory — zero candidates blocks generate (<code>needs_image</code>, 422).</p>
+</main>
+</div>
+<script>
+var sess = JSON.parse(localStorage.getItem('ia_session')||'null');
+if(!sess){ window.location.href='login.html'; }
+else document.getElementById('me').textContent = sess.email+' · '+sess.role;
+function norm(u){ try{ var x=new URL(u); x.search=''; return x.toString(); }catch(e){ return null; } }
+var demo = {title:'Solid-state batteries hit 900 km range in test fleet', source:'nature.com', published:'2026-08-30 · Nature', body:'Fleet test across 40 vehicles averaged 900 km per charge with 12-minute 10–80% fast charge. Authors report cobalt-free cathode and ceramic separator. We publish an original summary + source link only — no full-text republication.', img:'og:image 1200×630 found · score 0.91'};
+function setSteps(list){ document.getElementById('steps').innerHTML = list.map(function(s){ return '<li class="'+s.c+'"><span class="dot"></span><span>'+s.t+'</span></li>'; }).join(''); }
+document.getElementById('manualToggle').addEventListener('click', function(){ var m=document.getElementById('manual'); m.style.display = m.style.display==='none'?'block':'none'; });
+document.getElementById('fetch').addEventListener('click', function(){
+  var raw = document.getElementById('url').value.trim();
+  var n = norm(raw);
+  if(!n || !/^https?:\/\//.test(n)){ setSteps([{c:'fail',t:'400 bad URL — use http(s) article link'}]); return; }
+  if(/localhost|127\.|10\.|192\.168|169\.254/i.test(n)){ setSteps([{c:'fail',t:'Blocked by SSRF guard (private IP)'}]); return; }
+  var b=this; b.disabled=true;
+  setSteps([{c:'run',t:'Tier-1 free fast: OG + JSON-LD + readability…'}]);
+  setTimeout(function(){ setSteps([{c:'done',t:'Tier-1: title + body (1,840 chars) · image-score 0.91 ✓'},{c:'run',t:'Queue generate_caption (parallel text + image)…'}]);
+    setTimeout(function(){
+      var art = {url:n, hash:'sha256:'+n.length+'c9f', title:demo.title, source:demo.source, published:demo.published, body:demo.body, tier:'free', id:'art-'+Date.now()};
+      localStorage.setItem('ia_article', JSON.stringify(art));
+      document.getElementById('rTitle').textContent = art.title;
+      document.getElementById('rMeta').textContent = art.source+' · '+art.published+' · fetch_tier: free · cost $0.00';
+      document.getElementById('rBody').textContent = art.body;
+      document.getElementById('result').style.display='block';
+      setSteps([{c:'done',t:'Fetched ✓'},{c:'done',t:'Ready for review ✓'}]);
+      b.disabled=false;
+    }, 900);
+  }, 900);
+});
+function goReview(){ var a = localStorage.getItem('ia_article'); if(!a){ setSteps([{c:'fail',t:'Fetch first — no article yet'}]); return; } window.location.href='review.html'; }
+document.getElementById('toReview').addEventListener('click', goReview);
+document.getElementById('useManual').addEventListener('click', function(){
+  var t=document.getElementById('mTitle').value, s=document.getElementById('mSrc').value, b=document.getElementById('mBody').value;
+  if(b.length<300){ setSteps([{c:'fail',t:'Manual body too short — paste at least 300 chars'}]); return; }
+  localStorage.setItem('ia_article', JSON.stringify({url:document.getElementById('url').value, hash:'sha256:manual', title:t, source:s, published:'manual paste', body:b, tier:'manual', id:'art-'+Date.now()}));
+  goReview();
+});
+</script>
+</body>
+</html>

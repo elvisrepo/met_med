@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — Users</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --surface-warm: #eeeeee;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --meta: #111111;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --leading-body: 1.52;
+  --leading-tight: 1.06;
+  --tracking-display: -0.025em;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-8: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body)}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{border-right:1px solid var(--border);background:var(--surface);padding:var(--space-5);display:flex;flex-direction:column;gap:2px}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 var(--space-3);border-radius:var(--radius-md);text-decoration:none;color:var(--fg-2);font-size:var(--text-sm)}
+.side a.on{background:var(--accent);color:var(--accent-on);font-weight:600}
+.main{padding:var(--space-8);max-width:860px}
+.eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:var(--tracking-display);margin:6px 0 4px}
+.hint{color:var(--muted);font-size:var(--text-sm);margin:0 0 var(--space-5)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-4)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+.invite-row{display:flex;gap:var(--space-2)} input{flex:1;font:inherit;min-height:44px;padding:0 var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+input:focus{outline:none;box-shadow:var(--focus-ring)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;color:var(--fg);white-space:nowrap}
+.btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border-soft)}
+th{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;color:var(--muted)}
+td.num{text-align:right;font-family:var(--font-mono)}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:var(--text-xs);padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border)}
+.pill-ok{color:var(--success);border-color:var(--success)} .pill-warn{color:var(--warn);border-color:var(--warn)} .pill-err{color:var(--danger);border-color:var(--danger)}
+.notice{font-size:var(--text-sm);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--bg);margin-top:12px;display:none}
+code{font-family:var(--font-mono)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}.invite-row{flex-direction:column}.main{padding:var(--space-5)}}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="side" data-od-id="sidenav">
+<a href="new.html" data-od-id="nav-new">＋ New post</a><a href="review.html" data-od-id="nav-review">Review</a><a href="dashboard.html" data-od-id="nav-dashboard">Dashboard</a><a href="users.html" class="on" data-od-id="nav-users">Users</a><a href="../index.html" data-od-id="nav-index">Overview</a>
+</nav>
+<main class="main">
+<div class="eyebrow">/users · admin only</div>
+<h1 data-od-id="users-title">Users</h1>
+<p class="hint">Invite-only. One-use link, 24h expiry. Deactivation preserves post history.</p>
+<div class="panel" data-od-id="invite-panel">
+<label for="email">Invite by email</label>
+<div class="invite-row"><input id="email" placeholder="new@studio.co" data-od-id="invite-email"><button class="btn btn-primary" id="send" data-od-id="invite-button">Send invite →</button></div>
+<div class="notice" id="msg" data-od-id="invite-message"></div>
+</div>
+<div class="panel" data-od-id="users-panel">
+<div style="overflow:auto"><table data-od-id="users-table">
+<tr><th>Email</th><th>Role</th><th>Status</th><th style="text-align:right">Posts</th><th></th></tr>
+<tbody id="rows"></tbody>
+</table></div>
+<p style="font-size:13px;color:var(--muted)">Admin guard: editors hitting this route see 403. Roles: <code>admin | editor</code>.</p>
+</div>
+</main>
+</div>
+<script>
+var users=[{e:'admin@studio.co',r:'admin',s:'active',n:12},{e:'mia@studio.co',r:'editor',s:'active',n:44},{e:'jon@studio.co',r:'editor',s:'active',n:33},{e:'ana@studio.co',r:'editor',s:'invited · expires 14h',n:25}];
+var extra=JSON.parse(localStorage.getItem('ia_invites')||'[]'); users=users.concat(extra);
+function render(){
+ document.getElementById('rows').innerHTML=users.map(function(u,i){
+  var p=u.s.indexOf('active')===0?'<span class="pill pill-ok">active</span>':(u.s.indexOf('invited')===0?'<span class="pill pill-warn">'+u.s+'</span>':'<span class="pill pill-err">'+u.s+'</span>');
+  var act=u.e==='admin@studio.co'?'':(u.s.indexOf('active')===0?'<button class="btn btn-sm" data-i="'+i+'" data-a="off">Deactivate</button>':'<button class="btn btn-sm" data-i="'+i+'" data-a="on">Reactivate</button>');
+  return '<tr><td><code>'+u.e+'</code></td><td>'+u.r+'</td><td>'+p+'</td><td class="num">'+u.n+'</td><td style="text-align:right">'+act+'</td></tr>'; }).join('');
+ document.querySelectorAll('[data-a]').forEach(function(b){ b.addEventListener('click', function(){
+  var u=users[+b.dataset.i]; u.s = b.dataset.a==='off'?'deactivated · history kept':'active'; render(); }); });
+}
+render();
+document.getElementById('send').addEventListener('click', function(){
+ var e=document.getElementById('email').value.trim(), m=document.getElementById('msg');
+ m.style.display='block';
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ m.innerHTML='<span class="pill pill-err">400</span> Enter a valid email.'; return; }
+ if(users.some(function(u){return u.e===e;})){ m.innerHTML='<span class="pill pill-warn">exists</span> '+e+' already invited.'; return; }
+ users.push({e:e,r:'editor',s:'invited · expires 24h',n:0}); extra.push({e:e,r:'editor',s:'invited · expires 24h',n:0});
+ localStorage.setItem('ia_invites', JSON.stringify(extra)); render();
+ m.innerHTML='<span class="pill pill-warn">invited</span> '+e+' — one-use link sent, expires in 24h.';
+ document.getElementById('email').value='';
+});
+</script>
+</body>
+</html>

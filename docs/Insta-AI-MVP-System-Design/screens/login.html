@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta AI — Login</title>
+<style>
+/* design-systems/clean/tokens.css
+ * Structured token bindings for Clean.
+ * clean product system with white surfaces, subtle borders, and focused hierarchy.
+ */
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f7;
+  --surface-warm: #eeeeee;
+  --fg: #111111;
+  --fg-2: #3a3a3a;
+  --muted: #707070;
+  --meta: #111111;
+  --border: #d9d9d9;
+  --border-soft: #eeeeee;
+  --accent: #111111;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #168a46;
+  --warn: #b7791f;
+  --danger: #c53030;
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 36px;
+  --text-3xl: 54px;
+  --text-4xl: 76px;
+  --leading-body: 1.52;
+  --leading-tight: 1.06;
+  --tracking-display: -0.025em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-y-desktop: 96px;
+  --section-y-tablet: 68px;
+  --section-y-phone: 48px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.18);
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --container-max: 1180px;
+  --container-gutter-desktop: 36px;
+  --container-gutter-tablet: 24px;
+  --container-gutter-phone: 16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--fg);font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body);min-height:100vh;display:grid;place-items:center;padding:var(--space-6)}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-8);width:100%;max-width:420px;box-shadow:var(--elev-raised)}
+.brand{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-weight:700;margin-bottom:var(--space-2)}
+.mark{width:32px;height:32px;border-radius:var(--radius-md);background:var(--accent);color:var(--accent-on);display:grid;place-items:center;font-family:var(--font-mono);font-size:var(--text-sm)}
+h1{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:var(--tracking-display);margin:0 0 var(--space-1)}
+.hint{color:var(--muted);font-size:var(--text-sm);margin:0 0 var(--space-5)}
+.field{margin-bottom:var(--space-4)}
+label{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-2)}
+input{width:100%;font:inherit;min-height:44px;padding:0 var(--space-4);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg)}
+input:focus{outline:none;box-shadow:var(--focus-ring)}
+.err{display:none;font-size:var(--text-sm);color:var(--danger);margin:0 0 var(--space-3)}
+.btn{width:100%;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 var(--space-5);border-radius:var(--radius-md);border:1px solid var(--accent);background:var(--accent);color:var(--accent-on);font:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-hover)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.meta{margin-top:var(--space-5);border-top:1px solid var(--border-soft);padding-top:var(--space-4);font-size:var(--text-sm);color:var(--fg-2)}
+.meta code{font-family:var(--font-mono)}
+.back{display:inline-block;margin-top:var(--space-4);font-size:var(--text-sm);color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="card" data-od-id="login-card">
+<div class="brand"><span class="mark">IA</span> Insta AI</div>
+<h1 data-od-id="login-title">Sign in</h1>
+<p class="hint">Invite-only. No public signup. Session: JWT in httpOnly cookie.</p>
+<p class="err" id="err" role="alert" data-od-id="login-error"></p>
+<div class="field"><label for="email">Work email</label><input id="email" type="email" value="mia@studio.co" autocomplete="username" data-od-id="login-email"></div>
+<div class="field"><label for="pw">Password</label><input id="pw" type="password" value="password123" autocomplete="current-password" data-od-id="login-password"></div>
+<button class="btn" id="go" data-od-id="login-submit">Sign in →</button>
+<div class="meta" data-od-id="login-invite-note">New here? Ask an admin for an invite — one-use link, expires in 24h. Locked after 5 failed attempts/min (429).<br>Demo: any valid email + password ≥ 8 chars signs in.</div>
+<a class="back" href="../index.html" data-od-id="link-index">← Back to overview</a>
+</div>
+<script>
+var fails = parseInt(localStorage.getItem('ia_fails')||'0',10);
+var el = document.getElementById('err');
+function show(m){ el.textContent = m; el.style.display='block'; }
+document.getElementById('go').addEventListener('click', function(){
+  var e = document.getElementById('email').value.trim();
+  var p = document.getElementById('pw').value;
+  el.style.display='none';
+  if(fails >= 5){ show('Rate-limited (429): too many attempts. Wait a minute and try again.'); return; }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ show('Enter a valid work email (400).'); return; }
+  if(p.length < 8){ fails++; localStorage.setItem('ia_fails', String(fails)); show('Invalid credentials (401). Attempt '+fails+'/5.'); return; }
+  localStorage.setItem('ia_fails','0');
+  localStorage.setItem('ia_session', JSON.stringify({email:e, role: e.indexOf('admin')===0?'admin':'editor', at: Date.now()}));
+  this.disabled = true; this.textContent = 'Signing in…';
+  setTimeout(function(){ window.location.href = 'new.html'; }, 600);
+});
+</script>
+</body>
+</html>
