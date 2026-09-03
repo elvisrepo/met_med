@@ -34,15 +34,17 @@ Seam: `generate_post(article) -> {caption, hashtags, image_key, tokens}` — ada
 Auth: admin-invite-only, no public register, no Google OAuth. JWT httpOnly + Secure + SameSite=Lax, CSRF, login rate-limit 5/min. All LLM/IG keys server-side.
 Fetch (`fetch_article`, 3-tier, generic — no per-site selectors required):
 Tier-1 free fast (default): normalize URL (strip UTM, sha256 url_hash, indexed NOT unique — same URL reusable), SSRF guard (http/https only, block private/169.254, 15s timeout, 5MB cap, 3 redirects), httpx → OG/Twitter/JSON-LD (`og:title`, `og:image`, `article:published_time`, `NewsArticle{headline,image,datePublished,articleBody}`) + trafilatura/readability body (text-only, 50k cap, min 300 chars) + image-score (srcset/data-src normalized, drop logo/avatar/ad/1px, score in-article/size/early/alt/aspect, min 400px) → title/body/main_image_url/published_at/source. Retry 2x.
-Tier-2 free JS (auto when Tier-1 signals js_shell/short-body): Playwright Chromium headless, isolated `fetch_js` queue (concurrency 1-2), block fonts/ads, wait article+h1 (20s), 1 scroll, then same extractors on rendered DOM.
+Tier-2 free JS (auto when Tier-1 signals js_shell/short-body): Playwright Chromium headless, isolated `fetch_js` queue (concurrency 1-2), block fonts/ads, wait article+h1 (20s), 1 scroll, then same extractors on rendered DOM. Deep-dive: single browser context reused, ~300MB RAM, never blocks fast Tier-1 queue; bottleneck is render wait, mitigated by 20s cap + beat alert if queue depth >10; Playwright worker scales to 2 replicas max on 2vCPU/4GB VPS.
 Tier-3 Firecrawl fallback (disabled by default: `FIRECRAWL_ENABLED=false`, `FIRECRAWL_API_KEY` server-only in .env, never browser): when enabled, `scrape {formats:[markdown,html], onlyMainContent:true}` → same extractors on returned HTML. Log `fetch_tier: free|playwright|firecrawl` + `fetch_cost_usd` per Generation. Enabling later is config-only, no rewrite.
 Hard paywall (401/server-truncated): no bypass (ToS). Status `fetch_failed` + domain + reason. Source image mandatory: zero candidates → `needs_image` block, generation refused. Text-only pages: noted edge, unlikely per Dori — blocked for now, revisit if hit.
 Generate (`generate_caption`): parallel text + image, log model_text/image_version + image_prompt + tokens_in/out + cost_usd even on fail. Append-only generations.
 Publish (`publish_ig`): requires generation.status=in_review, creates Post draft → queued → posted. Idempotency generation_id, 2-step container→publish. `refresh_ig_token` beat daily (60-day token).
 Categories: sport / science / showbiz / politics / general. Politics neutral-factual + source link, showbiz no rumors as fact, politics/showbiz images abstract no real faces, no text overlay, 3-5 hashtags, source credit mandatory.
-Frontend: routes /login /new /review/:id /dashboard /users, React-Query polling, no Redux. Caddy serves SPA, proxies /api/*.
+Frontend: routes /login /new /review/:id /dashboard /users, React-Query polling, no Redux. Components: UrlForm, CaptionEditor (live count), ImagePreview, CostPill, StatusTable, InviteForm. Desktop-first responsive, labels + focus + 44px targets. Caddy serves SPA, proxies /api/*.
+Backend docs/validation: DRF serializers validate all inputs, OpenAPI via drf-spectacular at `/api/docs`, error shape `{code, message, retryable}`. Status codes: 202 async accepted, 400 bad URL, 422 fetch_failed/needs_image, 409 wrong state (publish without in_review), 401/403 auth, 429 rate-limited.
 Deploy: one compose (caddy/web/gunicorn/worker/beat/db/redis), Caddy auto-SSL, migrate on deploy, .env 600 on host, provider firewall. No Terraform/K8s.
 NFR: p95 <90s article→ready_for_review, <$0.10/post (alert at $0.07 avg, cap LLM_MONTHLY_CAP_USD, block image regen at 90%), OWASP basics + audits, no full-text republication (summary + link only).
+Monitoring: structlog JSON → docker logs, Sentry backend+frontend, UptimeRobot GET /api/healthz (60s), Plausible (not GA, internal tool), pg_dump nightly → B2 30-day + monthly restore test. Alert: p95 >75s/1h, failure rate >10%/day, token_expired, monthly cap 90%.
 
 ```yaml
 entities:
@@ -72,6 +74,14 @@ Good test = external behavior via seam, not internals. Prior art: harness smoke-
 ## Out of Scope
 
 Scheduler, bulk URLs, auto-post, Facebook publisher, WordPress publisher (Phase 2 adapters), Google OAuth, Terraform/K8s, CDN, Elasticsearch, email integration, advanced analytics.
+
+## Success Metrics / KPIs
+
+MVP succeeds if over 30 days: 3-5 posts/day avg, <5 min paste→approved per post, avg cost <$0.07/post (hard cap $0.10), fetch auto-success >90% (no manual paste), publish failure <5%, 2-4 active editors weekly. Review weekly: edit-rate per category (tune prompts after first 10 posts/category), cost/post trend, failure reasons.
+
+## Post-Launch
+
+Weekly: review dashboard (edit-rate, cost, failures), fix top failure domain, tune category prompts. Bugs: fix publish/auth first, metrics second. Roadmap Phase 2 in order: scheduler → WordPress adapter (reuse flow) → Facebook adapter → bulk ingest. Feedback: editors log bad caption/image with 1-click flag → prompt backlog.
 
 ## Further Notes
 
