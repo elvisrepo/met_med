@@ -9,6 +9,8 @@ Redis + Celery, Docker Compose local = cheap-VPS prod, Caddy SSL.
 
 - `docs/specs/insta-ai-mvp.md` — the spec: stories, YAML entities + API, NFRs,
   KPIs, testing. First prompt = spec: if output drifts from it, stop and re-anchor.
+- `docs/specs/glossary.md` — canonical vocabulary (Generation vs Post,
+  fetch_tier, needs_image, in_review…); use these terms exactly in code and docs.
 - `docs/specs/opendesign-reconciliation.md` — decisions that override the export
   (accept-invite route, manual-panel fields, stage-scoped status enums).
 - `docs/specs/design-tokens.md` — frozen Clean tokens for all frontend work.
