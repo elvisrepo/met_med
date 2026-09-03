@@ -60,6 +60,18 @@ per spec §Implementation Decisions and add their own nested AGENTS.md files.
 - Politics/showbiz images: abstract, no real faces. Captions: summary + source
   link, no full-text republication.
 
+## Architecture decisions (ADRs)
+
+- Significant choices live in `docs/adrs/` as `NNNN-short-slug.md` with
+  Status, Version (v1, bump on change), Context, Decision, Consequences.
+  Convention: `docs/adrs/README.md`.
+- When a conversation produces a new significant decision (stack, auth, data
+  rules, publish guarantees, infra, cost model) — or re-opens a recorded one —
+  propose an ADR: new numbered file for new decisions, Version bump + Changelog
+  entry for revisions. Never silently rewrite an accepted ADR.
+- Quote the ADR number in related code/PRs (`refs ADR-0004`). If implementation
+  contradicts an accepted ADR, stop and re-anchor like a spec drift.
+
 ## Working agreements
 
 - Small batches, one ticket at a time; commit before any big agent task.
