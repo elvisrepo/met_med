@@ -1,0 +1,25 @@
+# Module boundary rules — enforced in CI, read by the c4-diff skill.
+# v1: Django apps from the spec. Tests may import anything.
+version: 1
+apps: [users, articles, generations, publishing, metrics]
+banned_imports:
+  - importer: users
+    banned: [articles, generations, publishing, metrics]
+    reason: users is standalone (auth only)
+  - importer: articles
+    banned: [publishing, metrics]
+    reason: fetch knows nothing of publish or aggregates
+  - importer: generations
+    banned: [publishing]
+    reason: generation must be publishable without review, never self-publish
+  - importer: publishing
+    banned: [metrics]
+    reason: publishing logs via its own models; metrics aggregates post-hoc
+  - importer: metrics
+    banned: [publishing.tasks]
+    reason: read models only, never trigger a publish
+layering:
+  # views/serializers -> services -> models; never reversed.
+  - views may import: [services, models, serializers]
+  - views may not import: [tasks]
+  - services may not import: [views, serializers]

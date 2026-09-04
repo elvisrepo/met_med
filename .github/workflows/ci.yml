@@ -1,0 +1,45 @@
+# CI gate — blocks merge on fail (refs guardrails.md §2, AGENTS.md).
+# Path-filtered: never triggers before backend//frontend//infra land (scaffold ticket).
+# Scaffold MUST provide: pytest suite, frontend lint+test scripts,
+# scripts/check-boundaries.py (enforces infra/arch-boundaries.yaml),
+# backend/docs/openapi.yaml generation target.
+name: ci
+on:
+  pull_request:
+    paths: [backend/**, frontend/**, infra/**, .github/**]
+  push:
+    branches: [main]
+    paths: [backend/**, frontend/**, infra/**, .github/**]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r backend/requirements.txt
+      - run: pytest backend -q
+      - run: python scripts/check-boundaries.py
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: frontend}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pip-audit && pip-audit -r backend/requirements.txt
+      - run: npm audit --prefix frontend
+      - uses: returntocorp/semgrep-action@v1
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make openapi-check
+        # regenerates backend/docs/openapi.yaml; fails if stale (see spec-versioning.md §3)

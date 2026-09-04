@@ -27,6 +27,11 @@ check.
   AI-generated tests. We test at the `generate_post` seam with hand-written
   cases plus **approved fixtures** (golden article → caption/image-prompt pairs
   per category); prompt changes must keep fixtures green or justify the diff.
+- Model fixtures double as the model benchmark (ADR-0010): the fixture set must
+  contain real Albanian articles, Standard plus one Gheg sample. Swapping the
+  text/image model id = config change + full fixture run + weekly-sampling
+  watch for two weeks. Pin reasoning/thinking off for summarize/translate calls
+  (reasoning tokens are pure tax here).
 
 ### Architecture fitness — fitness functions, not vibes
 
